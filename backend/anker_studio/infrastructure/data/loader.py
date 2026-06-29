@@ -68,11 +68,15 @@ def load_evidence(category: str = "audio") -> List[Evidence]:
     processed = root / "processed"
     sample = root / "sample"
 
+    def _jsonl(d: Path) -> List[Path]:
+        # 忽略隐藏文件与 macOS AppleDouble（._*）伴随文件，避免二进制/编码污染
+        return sorted(p for p in d.glob("*.jsonl") if not p.name.startswith("."))
+
     files: List[Path] = []
     if processed.exists():
-        files = sorted(processed.glob("*.jsonl"))
+        files = _jsonl(processed)
     if not files and sample.exists():
-        files = sorted(sample.glob("*.jsonl"))
+        files = _jsonl(sample)
 
     evidences: List[Evidence] = []
     for f in files:

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anker · AI 原生产品定义工作台</title>
+  <link rel="stylesheet" href="static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <div>
+        <h1>AI 原生产品定义工作台</h1>
+        <p>让 AI 做超级智囊 · 用户替身 · 行业专家 —— 从真实数据到产品提案</p>
+      </div>
+    </div>
+    <div class="run">
+      <input id="brief" type="text" value="为 soundcore 设计下一款 TWS 耳机：用 AI 原生方法从洞察到定义。" />
+      <button id="runBtn">▶ 运行工作流</button>
+    </div>
+  </header>
+
+  <section class="pipeline" id="pipeline">
+    <!-- node chips injected -->
+  </section>
+
+  <main class="grid">
+    <div class="card span2" id="card-compare">
+      <h2>AI 驱动 vs 经验驱动（命题核心）</h2>
+      <div id="compare" class="muted">运行后显示量化对比。</div>
+    </div>
+
+    <div class="card" id="card-voc">
+      <h2>用户洞察 · JML（ABSA + ODI）</h2>
+      <div id="voc" class="muted">运行后显示真实评论挖出的机会。</div>
+    </div>
+
+    <div class="card" id="card-market">
+      <h2>市场/竞品 · AMI（超级智囊）</h2>
+      <div id="market" class="muted">运行后显示竞品短板与白空间。</div>
+    </div>
+
+    <div class="card" id="card-concept">
+      <h2>产品概念（双路径）</h2>
+      <div id="concept" class="muted">VOC 驱动 + 第一性原理/技术原生。</div>
+    </div>
+
+    <div class="card" id="card-users">
+      <h2>用户替身（合成用户，假设盲）</h2>
+      <div id="users" class="muted">运行后显示访谈判定。</div>
+    </div>
+
+    <div class="card span2" id="card-prfaq">
+      <h2>产品提案 · PR/FAQ（Working Backwards）</h2>
+      <div id="prfaq" class="muted">运行后显示提案。</div>
+    </div>
+
+    <div class="card" id="card-decision">
+      <h2>可行性与决策（NPS · GO/NO-GO）</h2>
+      <div id="decision" class="muted">行业专家 + 决策官。</div>
+    </div>
+
+    <div class="card" id="card-rubric">
+      <h2>评测 Rubric</h2>
+      <div id="rubric" class="muted">groundedness / faithfulness / 覆盖率…</div>
+    </div>
+  </main>
+
+  <footer>
+    <span id="status">就绪</span> · <a href="api/report" target="_blank">完整报告 JSON</a> ·
+    <a href="api/report?kind=opening" target="_blank">开题报告 JSON</a>
+  </footer>
+
+  <script src="static/app.js"></script>
+</body>
+</html>

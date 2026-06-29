@@ -1,0 +1,8 @@
+runs/
+assets/
+__pycache__/
+*.pyc
+.env
+data/processed/
+.DS_Store
+node_modules/

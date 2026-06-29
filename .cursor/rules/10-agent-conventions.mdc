@@ -1,0 +1,29 @@
+---
+description: Conventions for agents, the orchestration graph, and the AI-native product-definition workflow.
+globs: backend/anker_studio/application/**
+alwaysApply: false
+---
+
+# Agent 与编排约定（渐进式加载）
+
+## 角色边界（编排类 vs 能力类）
+- **编排类**：`product_manager`（主编排）、`graph/engine`。负责拆解、路由、迭代、收敛，不直接做底层分析。
+- **能力类**：`super_think_tank` / `user_proxy` / `industry_expert` / `decision_officer` 与 `platforms/*`。各自只负责单一职责，输入/输出均为 Pydantic 模型。
+
+## Agent 实现规范
+- 每个 Agent 继承 `agents/base.py:Agent`，实现 `run(state) -> <TypedResult>`。
+- Agent 只能通过注入的 `LLMGateway` 与 `RagService` 访问外部能力，禁止自行 import 具体 provider。
+- Agent 产出的每条论断都要带 `evidence_ids`；用 `cite()` 辅助。
+- 涉及"用户替身"必须**假设盲**：不得把研究假设/期望答案写进 persona 的 system prompt（反谄媚）。
+
+## 编排（StateGraph）
+- 节点签名：`(state: PipelineState) -> PipelineState`（返回增量合并）。
+- 条件边返回下一个节点名或 `END`。
+- `decision_officer` 前设 `interrupt_before`（HITL 闸口），并写入 `DecisionRecord`。
+- 全程 `Tracer` 记录每个节点的输入摘要、耗时、token、引用命中率。
+
+## 方法论锚点（不可省略）
+- 机会量化：ODI（重要性 × 满意度差）+ Impact = Reach×(Severity+Value+Strategic)。
+- 发现结构：Opportunity Solution Tree（结果 → 机会 → 方案 → 实验）。
+- 产品定义产物：Working Backwards PR/FAQ。
+- 决策指标：NPS 预测。

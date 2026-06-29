@@ -1,0 +1,15 @@
+# ── 核心（offline 确定性模式即可端到端运行，依赖极轻）──
+pydantic>=2.5
+loguru>=0.7
+python-dotenv>=1.0
+
+# ── 在线服务（FastAPI 流式接口 + MiniMax M3 调用）──
+fastapi>=0.110
+uvicorn[standard]>=0.27
+requests>=2.31
+
+# ── 可选增强（不装也能跑，装了能力更强；见 README）──
+# numpy>=1.24            # 向量检索加速（缺失时回退纯 Python TF-IDF）
+# datasets>=2.18         # 下载 Amazon Reviews 2023 真实数据
+# pytrends>=4.9          # Google Trends 连接器
+# chromadb>=0.4          # 持久化向量库（缺失时用内存向量库）

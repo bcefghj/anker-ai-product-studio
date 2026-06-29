@@ -1,0 +1,47 @@
+---
+description: Always-on engineering baseline for the Anker AI-Native Product Definition Studio. Enforces layering, data models, logging, tool conventions and citation discipline.
+globs:
+alwaysApply: true
+---
+
+# 工程基线（Always-On）
+
+> 本规则对标美团《用 Agent 评测思路管理 AI Coding》的"人人对齐 → 人机对齐"：
+> 先固化团队共识，再把共识变成 AI 编码时强制加载的约束，**防止 AI 产出加速系统腐化**。
+
+## 1. 四层架构（Starter / Application / Infrastructure / Common）
+所有后端代码必须落在四层之一，禁止跨层反向依赖：
+
+- `common/`：纯领域模型、配置、日志、工具注册、引用校验。不依赖其他层。
+- `infrastructure/`：外部能力实现（LLM 网关、数据加载、RAG、媒体、观测）。只依赖 `common/`。
+- `application/`：业务编排（graph 引擎、agents、platforms、methodology、evaluation、baseline）。依赖 `common/` 与 `infrastructure/` 的**接口**。
+- `starter/`：入口（CLI、FastAPI）。只做装配与暴露，不写业务逻辑。
+
+依赖方向只能是 `starter → application → infrastructure → common`。
+
+## 2. 数据与类型
+- 所有跨边界的数据结构必须是 **Pydantic v2 `BaseModel`**，禁止裸 `dict` 在层间传递。
+- 必须写**完整类型注解**；模块顶部统一 `from __future__ import annotations`（兼容 Python 3.9）。
+- 字段含义不明显时用 `Field(..., description=...)`。
+
+## 3. 日志
+- 一律使用 **loguru** 的 `logger`，禁止 `print` / 标准库 `logging`。
+- 关键节点（工具调用、检索、决策闸、重试）必须 `logger.info` 记录结构化上下文。
+
+## 4. 工具（Tool）约定
+- 工具用 `@tool(ToolType.READ)` 或 `@tool(ToolType.WRITE)` 注册。
+- `READ` 工具无副作用、可并发；`WRITE` 工具有副作用，**必须两步确认**（先 preview、人工/HITL 确认后才执行）。
+- 工具失败**返回结构化错误字符串而非抛异常**（"错误即信息"，交由上层模型/编排自修正）。
+
+## 5. 引用纪律（可溯源，反幻觉）—— 本项目的命门
+- 任何"洞察 / 痛点 / 机会 / 结论"都必须携带 `evidence_ids`，指向 `Evidence.source_id`。
+- 生成后必须经 `common/citations.py` 的**确定性逐字命中校验**；命中失败的论断要么重生成、要么标注为"未验证假设"。
+- 禁止在没有 Evidence 支撑的情况下输出量化数字。
+
+## 6. 确定性优先
+- 能用确定性算法（词典/统计/规则）得到的结果，不要交给 LLM 猜。
+- LLM 用于"叙述 / 归纳 / 角色扮演 / 批判"，**结构化数值由确定性核心产出**。这呼应安克 CIO 关于"大模型不确定性 vs 企业高确定性"的判断。
+
+## 7. 异常与降级
+- 每个外部调用要有 fallback：LLM 不可用 → 走 offline 确定性 provider；检索为空 → 重写查询重试（上限 3 次）。
+- 不允许静默失败。

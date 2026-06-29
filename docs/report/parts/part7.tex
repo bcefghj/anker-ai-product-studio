@@ -1,0 +1,34 @@
+\section{为什么规范是"企业级 vs 玩具"的分水岭}
+
+我们对标美团技术团队《用 Agent 评测思路管理 AI Coding——31 万行代码 AI 重构的实践》的核心理念：当 90\% 以上代码由 AI 生成，
+\textbf{没有统一规范，系统会加速腐化}。规范在 AI Coding 时代已从"协作建议"升级为"约束 AI 产出、阻止系统继续长新债的基础设施"。
+其方法论是\kw{人人对齐 $\rightarrow$ 人机对齐}：先让团队形成统一共识，再把共识固化为 AI 编码时强制加载的约束。
+
+\section{本项目落地的规范}
+
+\begin{itemize}
+\item \kw{AI Rule（always-on）}：\texttt{.cursor/rules/} 强制四层架构、Pydantic 数据模型、loguru 日志、完整类型注解、
+  工具 \texttt{@tool} 读写分离（WRITE 须两步确认）、\textbf{所有结论强制带 source\_id 引用}。
+\item \kw{Skill（渐进式加载）}：\texttt{skills/} 沉淀 VOC 分析、Working Backwards 的可执行 SOP。
+\item \kw{Pre-PR 自查}：\texttt{scripts/pre\_pr\_check.py} 在提交前做确定性规范校验（分层、日志、类型、异常），过滤 AI 编码常见低级问题。
+\item \kw{跨厂商模型对抗 CR}：\texttt{scripts/cross\_model\_review.py} 用 MiniMax M3 按本仓规范审查代码，对应"高阶模型审低阶 + 不同厂商互审"。
+\item \kw{确定性优先}：能用词典/统计/规则得到的结果不交给 LLM，回应"大模型不确定性 vs 企业高确定性"。
+\item \kw{异常与降级}：每个外部调用都有 fallback（LLM 不可用 $\rightarrow$ offline；检索为空 $\rightarrow$ 重写重试，上限 3 次），不静默失败。
+\end{itemize}
+
+\section{代码风格（与美团一致）}
+
+\begin{lstlisting}[language=Python]
+from pydantic import BaseModel, Field   # 必用 Pydantic 数据模型
+from loguru import logger               # 必用 loguru，不用 print/logging
+from typing import List, Optional       # 完整类型注解
+
+@tool(ToolType.READ)                     # 工具区分读/写；WRITE 须两步确认
+def search_evidence(query: str) -> List[Evidence]:
+    """检索证据（只读，可并发）。"""
+    logger.bind(node="rag").info(f"检索: {query}")
+    ...
+\end{lstlisting}
+
+\noindent 本项目所有后端模块均通过 \texttt{pre\_pr\_check.py} 校验、\texttt{compileall} 字节编译，并附带冒烟测试
+\texttt{backend/tests/test\_smoke.py}（验证端到端跑通且 groundedness/引用命中率达标、AI 组优于经验组）。

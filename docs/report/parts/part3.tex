@@ -1,0 +1,73 @@
+\section{四层架构}
+
+后端遵循 \kw{Starter / Application / Infrastructure / Common} 四层，依赖方向单向向下，由 \texttt{scripts/pre\_pr\_check.py}
+在提交前强制校验。
+
+\begin{center}
+\begin{tikzpicture}[font=\small,
+  layer/.style={draw=primary,rounded corners=5pt,fill=primary!7,minimum width=13cm,minimum height=1.1cm,align=center,text=ink},
+  a/.style={-Latex,thick,color=soft}]
+  \node[layer] (st) {\textbf{Starter} \quad CLI / FastAPI（入口，仅装配与暴露）};
+  \node[layer,below=0.5cm of st] (app) {\textbf{Application} \quad graph 编排 · 5 Agent · platforms(jml/bees/ami) · methodology · evaluation · baseline};
+  \node[layer,below=0.5cm of app] (infra) {\textbf{Infrastructure} \quad LLM 网关(MiniMax/offline) · data · RAG · NLP · assets · observability};
+  \node[layer,below=0.5cm of infra] (common) {\textbf{Common} \quad Evidence 等 Pydantic 模型 · 配置 · 日志 · 工具注册 · 引用校验};
+  \draw[a] (st)--(app); \draw[a] (app)--(infra); \draw[a] (infra)--(common);
+\end{tikzpicture}
+\captionof{figure}{四层架构：依赖只能 starter $\rightarrow$ application $\rightarrow$ infrastructure $\rightarrow$ common}
+\end{center}
+
+\section{StateGraph 编排}
+
+工作流以一个自研的、语义对齐 LangGraph 的最小状态图引擎编排（节点 / 条件边 / checkpoint / interrupt\_before），
+既保证依赖极轻、离线可复现，又借鉴 Harness 工程的"错误即信息"（节点异常被记录后按策略路由而非崩溃）。
+
+\begin{center}
+\begin{tikzpicture}[font=\small,
+  n/.style={draw=accent,fill=accent!7,rounded corners=4pt,minimum width=2.5cm,minimum height=0.8cm,align=center,text=ink},
+  d/.style={draw=primary,fill=primary!8,diamond,aspect=2.2,inner sep=1pt,align=center,text=ink},
+  a/.style={-Latex,thick,color=soft}]
+  \node[n] (voc) {voc\\JML};
+  \node[n,right=1.0cm of voc] (tt) {think\_tank\\AMI};
+  \node[n,right=1.0cm of tt] (pm) {pm\\双路径};
+  \node[n,below=0.9cm of pm] (us) {users\\用户替身};
+  \node[n,left=1.0cm of us] (ex) {expert\\可行性};
+  \node[d,left=1.0cm of ex] (dec) {decision\\GO?};
+  \node[n,below=0.9cm of dec] (out) {output\\PR/FAQ};
+  \draw[a] (voc)--(tt); \draw[a] (tt)--(pm); \draw[a] (pm)--(us);
+  \draw[a] (us)--(ex); \draw[a] (ex)--(dec);
+  \draw[a] (dec) -- node[above,text=soft]{\scriptsize GO/上限} (dec |- out) ;
+  \draw[a] (dec.south) -- (out.north);
+  \draw[a] (dec.north) to[out=90,in=180] node[above,text=soft]{\scriptsize 需迭代} (pm.west);
+\end{tikzpicture}
+\captionof{figure}{编排状态图：决策闸前设 HITL interrupt\_before；未达 GO 回到 pm 迭代}
+\end{center}
+
+\section{模块对照}
+
+\begin{table}[h]\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{p{3.6cm} p{4.4cm} X}
+\toprule
+\textbf{能力} & \textbf{模块} & \textbf{说明} \\
+\midrule
+确定性 ABSA & \texttt{infrastructure/nlp/} & aspect 词典 + 情感词典 + 否定翻转，子句级统计 \\
+机会量化 & \texttt{methodology/odi.py} & ODI 机会分 + Impact 评分 \\
+混合检索 & \texttt{infrastructure/rag/} & BM25 + TF-IDF，RRF 融合，检索-重写迭代 \\
+LLM 网关 & \texttt{infrastructure/llm/} & MiniMax M3 / offline 双 provider，自动降级 \\
+引用校验 & \texttt{common/citations.py} & 逐字命中 + 跨语言 aspect 桥接 \\
+编排引擎 & \texttt{application/graph/} & StateGraph + checkpoint + interrupt \\
+评测对比 & \texttt{application/evaluation/} & Rubric + AI/经验量化对比 \\
+\bottomrule
+\end{tabularx}
+\caption{核心模块对照（完整源码见附录）}
+\end{table}
+
+\section{全程治理}
+
+\begin{itemize}
+\item \kw{可溯源}：每条洞察/结论携带 \texttt{evidence\_ids}；生成后由确定性脚本逐字校验引用命中，失败则重生成或标注为"未验证假设"。
+\item \kw{防幻觉}：Agentic RAG 检索-打分-重写环（上限 3 次）；数值由确定性核心产出。
+\item \kw{HITL 决策闸}：\texttt{interrupt\_before} 在 GO/NO-GO 前暂停，支持人工确认后 \texttt{checkpoint} 恢复。
+\item \kw{审计}：每次决策写入 \texttt{DecisionRecord}（含理由、置信度、条件、引用、时间戳）。
+\item \kw{可观测}：每个节点的耗时/结果/引用命中写入 \texttt{runs/*.jsonl}，前端实时可视化。
+\end{itemize}

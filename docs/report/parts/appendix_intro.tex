@@ -1,0 +1,15 @@
+\section*{附录说明}
+\addcontentsline{toc}{section}{附录说明}
+
+以下为本项目\textbf{全部核心源码}的逐文件清单（真实代码，非节选），按四层架构与逻辑顺序组织，便于评委审阅工程实现。
+代码总量约 4{,}500 行（后端 Python 约 3{,}600 行 + 前端/脚本/配置）。每个文件标注其相对路径与行数。
+
+\vspace{0.4cm}
+\noindent 阅读建议：
+\begin{itemize}
+\item 先看 \texttt{common/models.py}（贯穿全系统的 Pydantic 领域模型）与 \texttt{common/citations.py}（反幻觉引用校验）。
+\item 再看 \texttt{infrastructure/nlp/absa.py}（确定性 ABSA 核心）与 \texttt{application/methodology/odi.py}（机会量化）。
+\item 然后看五个 Agent 与 \texttt{application/graph/}（StateGraph 编排引擎）。
+\item 最后看 \texttt{application/evaluation/}（Rubric 与 AI/经验对比）与部署脚本 \texttt{scripts/deploy.py}。
+\end{itemize}
+\vspace{0.3cm}

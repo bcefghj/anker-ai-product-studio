@@ -1,0 +1,89 @@
+\section{大赛与命题}
+
+2026 AI 先锋未来人才大赛由飞书与数智教育发展国际大学联盟主办、教育部指导。安克创新（深交所 300866）
+给出的命题是：
+
+\begin{quote}\itshape
+假设你要为安克设计一款创新产品，让 AI 做你的超级智囊、用户替身、行业专家——用这种新方法从头做一次产品设计与定义，
+比比看和靠经验拍脑袋有什么本质不同？
+\end{quote}
+
+交付物有两层：(1) 选一个安克品类，设计并演示一套"AI 原生"的产品设计与定义工作流，产出一份产品提案
+（用户洞察 + 产品概念 + 可行性分析）；(2) 说明这个 AI 原生方法论，并与传统方法对比（AI 驱动 vs 经验驱动，差异是什么）。
+
+\section{安克是谁：用数据说话}
+
+\begin{table}[h]\centering\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{p{4.6cm} X}
+\toprule
+\textbf{指标（2025 年报）} & \textbf{数据} \\
+\midrule
+营收 & 305.14 亿元（首破 300 亿，同比 +23.49\%） \\
+归母净利润 & 25.45 亿元（同比 +20.37\%） \\
+研发投入 & 28.93 亿元（同比 +37.20\%，占营收 9.48\%） \\
+研发人员 & 3{,}549 人（占总员工 56.30\%） \\
+全球用户 & 超 2 亿，覆盖 180+ 国家/地区 \\
+三大产品线 & 充电储能（Anker）/ 智能创新（eufy）/ 智能影音（soundcore） \\
+\bottomrule
+\end{tabularx}
+\caption{安克创新基本面（研发增速显著高于营收增速，主动以利润率换技术领先）}
+\end{table}
+
+\section{为什么是这道题：企业意图分析}
+
+安克自 2023 年起全面 \kw{All in AI}，构建了企业级 AI 能力底座 \kw{AIME 平台}（沉淀 300+ 活跃 Agent，其中
+已包含\textbf{客户之声 VOC 洞察、需求生成、产品文档}等研发 Agent），研发代码采纳率突破 50\%。在产品方法论层面，
+安克长期以三大平台驱动：
+
+\begin{itemize}
+\item \kw{JML}（Joint Maker Lab）：用户调研平台，把用户反馈转化为产品需求；
+\item \kw{BEES}（Best Experience Enhancement System）：用户体验评估，转化为设计优化；
+\item \kw{AMI}（Anker Market Insights）：市场洞察（趋势、竞品、渠道、全球数据）；
+\end{itemize}
+并以 \kw{NPS}（净推荐值）作为产品竞争力的核心指标，方法论本质是"用户洞察（VOC）+ 第一性原理"的双轮驱动。
+
+CIO 龚银的两个判断尤其关键：其一，"在定义一款产品时，从用户调研、市场洞察到用户洞察等各个环节，都可以深度融入
+AI 能力"；其二，"当前 AI 的创新很大程度是通过\textbf{技术原生驱动}创造全新 C 端体验，而非完全基于传统用户需求洞察"，
+且企业场景对\textbf{确定性}要求极高，"不能有幻觉"。
+
+\begin{center}
+\begin{tikzpicture}[font=\small,
+  b/.style={draw=primary,rounded corners=4pt,fill=primary!6,minimum width=3.4cm,minimum height=0.9cm,align=center},
+  a/.style={-Latex,thick,color=soft}]
+  \node[b] (voc) {用户洞察\\(VOC/JML)};
+  \node[b,right=1.2cm of voc] (fp) {第一性原理\\挖掘本质需求};
+  \node[b,right=1.2cm of fp] (rd) {高研发投入\\打造极致产品};
+  \node[b,right=1.2cm of rd] (val) {全球市场\\验证};
+  \draw[a] (voc)--(fp); \draw[a] (fp)--(rd); \draw[a] (rd)--(val);
+  \draw[a] (val.south) to[out=-90,in=-90] node[below,text=soft]{数据反哺下一轮洞察} (voc.south);
+\end{tikzpicture}
+\captionof{figure}{安克"双轮驱动"产品方法论——本系统将其每个环节 AI 原生化}
+\end{center}
+
+\textbf{我们的判断：}命题表面是"设计一款产品"，本质是要验证候选人能否用 AI 把"产品经理拍脑袋"重构为
+"\textbf{数据可溯源、可验证、可量化、可迭代}"的工作流，并能把方法论沉淀为可复用的 SOP——这恰好对接安克 AIME
+平台"沉淀产品方法论超级大脑"的方向。因此本作品的主体是\textbf{方法论 + 工作流系统 + 一份提案 + AI/经验量化对比}，
+产品本身只是方法论的演示载体。
+
+\section{行业洞察：竞品的 AI 化与赛道趋势}
+
+\begin{table}[h]\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{p{2.2cm} p{5.2cm} X}
+\toprule
+\textbf{竞品} & \textbf{代表性 AI 音频策略} & \textbf{启示} \\
+\midrule
+Bose & QuietComfort Ultra 的 CustomTune AI 音频校准 & 个性化音频是竞争焦点 \\
+Sony & WF-1000XM 系列 Precise Voice Pickup & 端侧人声分离技术路线 \\
+Samsung & Galaxy Buds 的 AI Live Translate & 实时翻译赋能场景 \\
+Apple & AirPods Pro 的 Hearing Aid 助听功能 & AI 赋予耳机健康/医疗属性 \\
+\bottomrule
+\end{tabularx}
+\caption{主要竞品 AI 音频策略——本系统在 AMI 模块对其评论做真实拆解}
+\end{table}
+
+结合安克自身的技术原生能力（\kw{Thus™ 芯片}：全球首款 NOR Flash 存算一体 CIM AI 芯片，算力较上代 +150 倍，
+首发 soundcore Liberty 5 Pro；以及端侧 AI 趋势、个性化听力健康趋势、多设备无缝连接趋势），我们选择
+\textbf{智能影音 / soundcore 耳机}作为演示品类：它数据最丰富、竞品 AI 策略最清晰、技术原生故事最强。系统本身
+品类无关，切换到充电或 eufy 仅需更换数据配置与 aspect 词典。

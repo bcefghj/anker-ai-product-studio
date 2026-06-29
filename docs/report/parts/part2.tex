@@ -1,0 +1,66 @@
+\section{核心理念：把"判断"建立在可验证的证据上}
+
+产品经理的天花板就是产品判断的天花板。AI 原生方法的本质，是把"判断"从\textbf{个人经验}升级为\textbf{系统能力}——
+让每一条洞察都可追溯到真实证据、每一个假设都可被合成用户验证、每一项机会都可被量化排序。
+
+为回应安克"大模型不确定性 vs 企业高确定性"的矛盾，本系统采用\kw{确定性核心 + LLM 增强}的设计：能用确定性算法
+（词典 / 统计 / 规则）得到的结构化数值，绝不交给 LLM 猜；LLM 只负责\textbf{叙述、归纳、角色扮演、批判}。并以
+\textbf{逐字引用校验}把幻觉关进可审计的笼子。
+
+\section{标准作业流程（SOP）}
+
+\begin{center}
+\begin{tikzpicture}[font=\small,node distance=0.55cm,
+  s/.style={draw=accent,fill=accent!6,rounded corners=3pt,minimum width=12.5cm,minimum height=0.72cm,align=left,text=ink},
+  a/.style={-Latex,thick,color=soft}]
+  \node[s] (n1) {(1) 接入多源真实证据 Evidence——目标品牌 + 竞品评论 + 趋势};
+  \node[s,below=of n1] (n2) {(2) JML 用户洞察：确定性 ABSA $\rightarrow$ ODI 机会评分 $\rightarrow$ 机会解决方案树 OST};
+  \node[s,below=of n2] (n3) {(3) AMI 竞品/趋势：竞品短板 $\rightarrow$ 白空间机会；Agentic RAG 补充证据};
+  \node[s,below=of n3] (n4) {(4) 概念生成（双路径）：VOC 驱动 $\oplus$ 第一性原理/技术原生 $\rightarrow$ 融合概念};
+  \node[s,below=of n4] (n5) {(5) 用户替身：OCEAN 合成用户，假设盲访谈 $\rightarrow$ 接受度/异议/必须改进};
+  \node[s,below=of n5] (n6) {(6) 行业专家：技术/BOM/供应链/合规可行性 + Reflexion 批判};
+  \node[s,below=of n6] (n7) {(7) 决策官：NPS 预测 $\rightarrow$ GO/NO-GO（HITL 闸口）$\rightarrow$ DecisionRecord};
+  \node[s,below=of n7] (n8) {(8) Working Backwards 产出 PR/FAQ；评测 Rubric + AI/经验对比};
+  \foreach \i/\j in {n1/n2,n2/n3,n3/n4,n4/n5,n5/n6,n6/n7,n7/n8} \draw[a] (\i)--(\j);
+  \draw[a] (n8.east) to[out=0,in=0] node[right,text=soft,align=left]{\scriptsize 未达 GO\\\scriptsize 且有迭代预算} (n4.east);
+\end{tikzpicture}
+\captionof{figure}{AI 原生产品定义 SOP（八步闭环，决策未通过则回到概念环节迭代）}
+\end{center}
+
+\section{映射安克三大平台}
+
+\begin{table}[h]\centering\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{p{2.0cm} p{4.0cm} X}
+\toprule
+\textbf{安克平台} & \textbf{传统形态} & \textbf{本系统的 AI 原生版} \\
+\midrule
+JML & 人工访谈、问卷、Shulex VOC & 真实评论 ABSA + ODI 机会评分 + 机会解决方案树 \\
+AMI & 分析师做竞品/趋势报告 & 竞品 ABSA $\rightarrow$ 短板/白空间 + 趋势检索（Agentic RAG） \\
+BEES & 用户测试、NPS 调研 & 合成用户假设盲访谈 + 体验演化 + NPS 预测 \\
+第一性原理 & 资深判断 & 技术原生路径（端侧 AI / Thus 芯片能力正推） \\
+\bottomrule
+\end{tabularx}
+\caption{把安克现有方法论平台逐一 AI 原生化}
+\end{table}
+
+\section{方法论锚点（均为业界成熟方法，非自造）}
+
+\begin{itemize}
+\item \kw{Working Backwards}（Amazon）：先写"上市新闻稿 + 内外部 FAQ"，写不动即说明概念不成立。
+\item \kw{Opportunity Solution Tree}（Teresa Torres）：结果 $\rightarrow$ 机会 $\rightarrow$ 方案 $\rightarrow$ 实验，保证从洞察到方案可追溯。
+\item \kw{ODI}（Anthony Ulwick）：机会分 $=$ 重要性 $+\max(\text{重要性}-\text{满意度},0)$，量化"未被满足"。
+\item \kw{VOC Impact}：$\text{Impact}=\text{Reach}\times(\text{Severity}+\text{Value}+\text{Strategic})$。
+\item \kw{合成用户}：OCEAN 人格 + 真实评论 grounding + \textbf{假设盲}反谄媚（参考 SCOPE / Grounded Simulation / Synthetic Users）。
+\end{itemize}
+
+\section{双路径：VOC 驱动 + 技术原生}
+
+工作流同时支持两条概念生成路径，并在产品经理节点融合，对应安克"双轮驱动"：
+
+\begin{itemize}
+\item \textbf{路径一（VOC 驱动）}：从机会分最高的真实痛点反推方案——确定性、低风险、可解释。
+\item \textbf{路径二（第一性原理 / 技术原生）}：从能力跃迁（端侧 AI、Thus 芯片）正推过去做不到的新体验——前瞻、差异化。
+\end{itemize}
+
+这正是对命题中"AI 创新很大程度是技术原生驱动"这一论断的工程化回应：好的产品定义既要"听见用户"，也要"看见技术拐点"。

@@ -1,0 +1,158 @@
+\documentclass[11pt,a4paper,fontset=fandol]{ctexart}
+
+% ---------- 宏包 ----------
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,calc}
+
+% ---------- 颜色 ----------
+\definecolor{primary}{RGB}{18,158,120}
+\definecolor{accent}{RGB}{74,124,255}
+\definecolor{ink}{RGB}{30,38,52}
+\definecolor{soft}{RGB}{120,135,158}
+\definecolor{codebg}{RGB}{246,248,251}
+\definecolor{codecmt}{RGB}{60,140,90}
+\definecolor{codekw}{RGB}{40,90,200}
+\definecolor{codestr}{RGB}{170,80,40}
+
+\hypersetup{colorlinks=true,linkcolor=primary,urlcolor=accent,citecolor=primary,
+  pdftitle={Anker AI 原生产品定义系统 技术报告},pdfauthor={戴尚好}}
+
+% ---------- 标题格式 ----------
+\titleformat{\section}[block]
+  {\Large\bfseries\color{primary}}{\thesection}{0.6em}{}
+  [\vspace{-0.4em}{\color{primary}\rule{\linewidth}{1.0pt}}]
+\titleformat{\subsection}[block]
+  {\large\bfseries\color{ink}}{\thesubsection}{0.5em}{}
+
+% ---------- 代码风格 ----------
+\lstset{
+  basicstyle=\scriptsize\ttfamily,
+  backgroundcolor=\color{codebg},
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  frame=single,
+  rulecolor=\color{soft!40},
+  commentstyle=\color{codecmt},
+  keywordstyle=\color{codekw}\bfseries,
+  stringstyle=\color{codestr},
+  numbers=left,
+  numberstyle=\tiny\color{soft},
+  numbersep=6pt,
+  tabsize=4,
+  xleftmargin=1.6em,
+}
+
+\newcommand{\kw}[1]{\textbf{\color{primary}#1}}
+\setlist{nosep,leftmargin=1.4em}
+
+% ====================================================================
+\begin{document}
+
+% ---------------- 封面 ----------------
+\begin{titlepage}
+\centering
+\vspace*{2.2cm}
+{\fontsize{16}{20}\selectfont\color{soft} 2026 AI 先锋未来人才大赛 · 安克创新命题 · 华南赛区}\\[0.4cm]
+{\color{soft}\rule{0.5\linewidth}{0.4pt}}\\[1.4cm]
+{\fontsize{34}{42}\selectfont\bfseries\color{primary} Anker AI 原生\\[0.2cm]产品定义系统}\\[1.0cm]
+{\fontsize{15}{22}\selectfont\color{ink} 让 AI 做你的\textbf{超级智囊 · 用户替身 · 行业专家}}\\[0.3cm]
+{\fontsize{13}{20}\selectfont\color{soft} 从真实用户数据，到一份可溯源、可验证、可量化的产品提案}\\[2.2cm]
+
+\begin{tikzpicture}
+  \node[draw=primary,rounded corners=8pt,line width=1pt,inner sep=10pt,text width=12cm,align=center,text=ink]
+  {\small 一套真实可运行的多智能体系统：把安克 JML / BEES / AMI 三大产品方法论平台做成 AI 原生版，
+   端到端从真实评论跑出产品提案，并用受控实验回答——\textbf{AI 驱动相较"经验拍脑袋"的本质不同}。};
+\end{tikzpicture}
+
+\vfill
+{\large\bfseries 戴尚好}\\[0.2cm]
+{\color{soft} 中国科学技术大学}\\[0.2cm]
+{\color{soft} 2026 年 6 月}
+\end{titlepage}
+
+% ---------------- 作者 / 链接页 ----------------
+\thispagestyle{empty}
+\vspace*{1.2cm}
+\section*{参赛信息与项目链接}
+\vspace{0.4cm}
+{\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\linewidth}{p{3.2cm} X}
+\toprule
+\textbf{参赛者} & 戴尚好 \\
+\textbf{学校} & 中国科学技术大学 \\
+\textbf{赛道 / 命题} & AI + 研发创新 ；安克创新——用 AI 重做一次产品设计与定义 \\
+\textbf{赛区} & 华南 \\
+\textbf{邮箱} & \href{mailto:bcefghj@163.com}{bcefghj@163.com} \\
+\textbf{个人主页} & \url{https://bcefghj.github.io} \\
+\textbf{GitHub 源码} & \url{https://github.com/bcefghj/anker-ai-product-studio} \\
+\textbf{在线 Demo} & \url{http://47.119.112.225/anker/app/} \\
+\textbf{项目宣传页} & \url{http://47.119.112.225/anker/} \\
+\textbf{项目导航 Hub} & \url{http://47.119.112.225/} \\
+\bottomrule
+\end{tabularx}}
+
+\vspace{0.8cm}
+\noindent\textbf{\color{primary}一句话摘要。}\;
+本作品不是 PPT，而是一套真实可运行、数据可溯源、可评测的多智能体系统。它把安克内部真实的产品方法论平台
+JML/BEES/AMI 做成 AI 原生版，让 AI 扮演超级智囊、用户替身、行业专家，端到端从真实用户评论跑出一份产品提案
+（Working Backwards PR/FAQ），并用一个受控对比实验量化回答命题：在同一 brief 下，AI 原生工作流相较"经验拍脑袋"，
+命中真实痛点率由 33\% 提升到 100\%、可溯源证据引用由 0 增至 56 条、预测 NPS 提升约 30 分。系统遵循对标大厂的
+AIGC 工程规范（四层架构、AI Rule、Pre-PR、跨厂商模型对抗 CR），并已部署上线（与既有项目按目录/端口/路由隔离，互不影响）。
+
+\newpage
+\tableofcontents
+\newpage
+
+% ====================================================================
+\part{命题理解与背景洞察}
+\input{parts/part1.tex}
+
+\part{AI 原生产品定义方法论}
+\input{parts/part2.tex}
+
+\part{系统架构}
+\input{parts/part3.tex}
+
+\part{五个 AI 角色详解}
+\input{parts/part4.tex}
+
+\part{数据与用户洞察（VOC）}
+\input{parts/part5.tex}
+
+\part{评测与对比实验}
+\input{parts/part6.tex}
+
+\part{工程规范（对标大厂 AIGC）}
+\input{parts/part7.tex}
+
+\part{部署与运维}
+\input{parts/part8.tex}
+
+\part{结果展示与链接}
+\input{parts/part9.tex}
+
+% ====================================================================
+\appendix
+\part{附录}
+\input{parts/appendix_intro.tex}
+\input{appendix_code.tex}
+
+\end{document}

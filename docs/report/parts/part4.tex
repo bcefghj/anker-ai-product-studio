@@ -1,0 +1,43 @@
+\section{超级智囊（AI 原生 AMI）}
+\textbf{职责}：行业研究、竞品分析、趋势洞察。\textbf{输入}：竞品评论集 + 趋势。\textbf{输出}：\texttt{MarketIntel}（竞品优势/短板、白空间机会、趋势信号）。
+
+对每个竞品（Bose/Sony/Samsung/Apple）做确定性 ABSA：负面率高且提及广的 aspect 记为\textbf{短板}（即差异化白空间），
+满意度高的记为\textbf{优势}；多个竞品共同的短板被聚合为强度更高的"白空间机会"。随后用 \kw{Agentic RAG} 以英文检索词
+（由中文 aspect 经词典映射）为每个白空间机会补充真实评论证据，并累计检索迭代数供评测统计。
+
+\section{产品经理（编排，双路径）}
+\textbf{职责}：需求拆解、概念生成、迭代收敛。首轮生成两条路径的候选概念（VOC 驱动 / 技术原生）并融合：融合概念既覆盖机会分
+最高的真实痛点，又叠加端侧 AI 技术使能与竞品白空间。后续轮次吸收用户替身的 \texttt{must\_fixes} 与行业专家的风险，对概念做修订。
+每个差异点都携带 \texttt{evidence\_ids}。
+
+\section{用户替身（合成用户面板）}
+\textbf{职责}：用户访谈、痛点验证。把真实评论按"主诉 aspect"聚成细分人群，构建 \kw{OCEAN} 大五人格画像的合成用户
+（人格由确定性哈希生成、可复现）。访谈采用\textbf{假设盲}原则：只向 persona 暴露其自身画像与概念要点，\textbf{不暴露研究目标}，
+从架构上杜绝谄媚式确认（参考 Grounded Simulation 的反谄媚控制）。输出每个细分人群的判定（would\_buy / maybe /
+would\_not\_buy）、接受度、异议与必须改进项，并回链其来源评论。
+
+\section{行业专家（可行性 + Reflexion）}
+\textbf{职责}：技术 / 供应链 / BOM / 合规可行性评估，并以 \kw{Reflexion} 方式批判概念、产出风险项与缓解方案。
+例如：端侧 AI 芯片 + 多麦克风抬高 BOM（建议首发只上最高价值能力、其余 OTA）；实时翻译重负载难全端侧（端云协同）；
+听力个性化在欧美受医疗法规约束（分区合规）。总体可行性以红/黄/绿三档输出，作为决策官输入。
+
+\section{决策官（NPS + GO/NO-GO）}
+\textbf{职责}：NPS 预测、GO/NO-GO 决策、可审计记录。NPS 预测以可解释方式合成：目标品牌当前满意度基线 $+$ 命中高机会痛点
+的覆盖加成 $+$ 合成用户接受度修正。决策规则综合 NPS、可行性、平均接受度三者，输出 \texttt{GO / CONDITIONAL\_GO /
+NO\_GO} 与条件清单，并写入 \texttt{DecisionRecord}。当开启 HITL 时，在该节点前暂停等待人工确认。
+
+\begin{table}[h]\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{p{2.4cm} p{3.2cm} X}
+\toprule
+\textbf{角色} & \textbf{命题对应} & \textbf{回答的问题} \\
+\midrule
+超级智囊 & AI 当超级智囊 & 机会在哪？竞品弱在哪？ \\
+产品经理 & （编排） & 做什么？怎么收敛？ \\
+用户替身 & AI 当用户替身 & 用户认不认？哪里必须改？ \\
+行业专家 & AI 当行业专家 & 做不做得出来？风险几何？ \\
+决策官 & （治理） & 要不要做？凭什么？ \\
+\bottomrule
+\end{tabularx}
+\caption{五角色与命题三角色的对应}
+\end{table}

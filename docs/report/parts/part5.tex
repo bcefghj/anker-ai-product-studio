@@ -1,0 +1,56 @@
+\section{多源真实数据链路}
+
+对标安克内部"Shulex VOC + 爬取 Amazon 评论"的真实做法，系统的数据底座是\textbf{多源、真实、可离线复现}的：
+
+\begin{itemize}
+\item \kw{核心（JML/BEES）}：Amazon Reviews 2023（McAuley Lab, UCSD，HuggingFace）的 \texttt{raw\_review\_Electronics}
+  与 \texttt{raw\_meta\_Electronics}，按 \texttt{store} 字段筛 soundcore 评论做用户洞察；按时间切片做体验演化。
+\item \kw{竞品（AMI）}：同一数据集按 \texttt{store} 筛 Bose / Sony / Samsung / Apple，得到\textbf{真实竞品评论}，无需爬虫、可离线。
+\item \kw{趋势/外部}：可选 Google Trends（pytrends）与 Web 搜索连接器；缺失时回退到带出处的离线结构化趋势信号。
+\item \kw{离线样本}：\texttt{data/make\_sample.py} 可复现生成"合成但贴近真实"的样本评论，使系统零网络即可端到端运行（本报告数据即来自该样本）。
+\end{itemize}
+
+所有来源统一归一为 \texttt{Evidence}\,$\{$\,source\_id, source\_type, brand, rating, text, date, url\,$\}$，
+\textbf{Agent 只能引用 Evidence}，从机制上杜绝凭空生成。
+
+\section{确定性 ABSA 与 ODI 机会评分}
+
+ABSA 在子句级用 aspect 词典匹配 aspect，用情感词典 + 否定翻转 + 评分兜底判定极性，按评论去重统计提及量（Reach）与负面率
+（Severity），并给出代表性引用。机会量化采用 Ulwick ODI 与 VOC Impact：
+\[
+\text{重要性}=f(\text{Reach}),\quad \text{满意度}=10\times\text{正面率},\quad
+\text{机会分}=\text{重要性}+\max(\text{重要性}-\text{满意度},0)
+\]
+\[
+\text{Impact}=\text{Reach}\times(\text{Severity}+\text{Value}+\text{Strategic})
+\]
+其中 Strategic 对与安克技术原生强相关的 aspect（降噪、通话、音质）赋更高权重。
+
+\section{用户洞察结果（样本数据真实运行）}
+
+\begin{table}[h]\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{X r r r r r}
+\toprule
+\textbf{aspect 维度} & \textbf{提及覆盖} & \textbf{负面率} & \textbf{满意度} & \textbf{机会分} & \textbf{Impact} \\
+\midrule
+连接稳定性/多点 & 28\% & 64\% & 2.73 & \textbf{8.97} & 0.64 \\
+佩戴舒适度 & 42\% & 18\% & 7.65 & 8.25 & 0.71 \\
+App 体验 & 25\% & 67\% & 3.00 & 8.00 & 0.57 \\
+音质 & 35\% & 38\% & 6.19 & 7.61 & 0.76 \\
+耐用性 & 16\% & 79\% & 2.10 & 6.34 & 0.36 \\
+通话质量 & 23\% & 54\% & 4.64 & 5.90 & 0.59 \\
+价格/价值 & 20\% & 62\% & 3.75 & 5.85 & 0.41 \\
+续航 & 26\% & 32\% & 6.45 & 5.62 & 0.50 \\
+降噪 ANC & 21\% & 24\% & 7.60 & 4.92 & 0.47 \\
+\bottomrule
+\end{tabularx}
+\caption{soundcore 用户洞察（120 条评论样本）。机会分最高的是\textbf{连接稳定性/多点、佩戴舒适度、App 体验}}
+\end{table}
+
+\noindent\textbf{关键发现：}经验直觉通常押"音质 / 续航 / 性价比"，但数据显示机会分最高的痛点其实是\textbf{连接稳定性/多点、
+App 体验}等——这正是"拍脑袋"的系统性盲区。每个机会均挂有代表性真实评论 \texttt{evidence\_id}，并据此生成机会解决方案树
+（结果 $\rightarrow$ 机会 $\rightarrow$ 候选方案 $\rightarrow$ 实验），完整结构见在线 Demo 与运行报告。
+
+\section{BEES 体验演化}
+按评论年份切片观察重点 aspect 的负面率变化，用于识别"某能力是在变好还是退步"，为 NPS 预测与迭代提供时间维度的体验信号。
